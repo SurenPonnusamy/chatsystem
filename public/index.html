@@ -1,0 +1,57 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Node.js Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #messages {
+      list-style-type: none;
+      padding: 0;
+    }
+    #messages li {
+      padding: 8px;
+      background: #f1f1f1;
+      margin: 2px 0;
+    }
+    #form {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chat Room</h1>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" placeholder="Type a message..." /><button>Send</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    // When the form is submitted, send the message to the server
+    form.addEventListener('submit', (event) => {
+      event.preventDefault(); // Prevent page reload on form submission
+      socket.emit('chat message', input.value);
+      input.value = ''; // Clear the input
+    });
+
+    // Listen for chat messages from the server and display them
+    socket.on('chat message', (msg) => {
+      const li = document.createElement('li');
+      li.textContent = msg;
+      messages.appendChild(li);
+      window.scrollTo(0, document.body.scrollHeight); // Auto-scroll to the bottom
+    });
+  </script>
+</body>
+</html>
